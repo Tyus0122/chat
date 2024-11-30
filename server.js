@@ -31,23 +31,33 @@ id_to_socket = {}
 const findidwithsocketid = (socketid) => _.findKey(id_to_socket, (id) => id === socketid);
 
 io.on('connection', (socket) => {
-    console.log(id_to_socket)
     socket.on("registerTheToken", async ({ token }) => {
+        console.log("token: "+token)
         details = await tokentouser(token);
+        console.log("details: "+details.data)
         id_to_socket[details.data._id] = socket.id
-        console.log('A user connected', socket.id, findidwithsocketid(socket.id));
+        console.log('A user connected');
+        console.log(id_to_socket)
         // io.to(socket.id).emit("event1","hello")
     })
     socket.on('messagesent', (data) => {
         console.log('Received a temp event', data);
     })
     socket.on('disconnect', () => {
-        console.log('A user disconnected');
+        console.log('user disconnected')
+        delete id_to_socket[findidwithsocketid(socket.id)]
+        console.log(id_to_socket)
     });
     socket.on("message", async (data) => {
-        console.log(data);
-        // details=await tokentouser(data.token);
-        io.to(id_to_socket[data.opid]).emit("message", { "message": data.message, "from": findidwithsocketid(socket.id) })
+        const payload = {
+            message: data.message,
+            isSender: false,
+            time: data.time_of_message,
+            _id: data.uid,
+            from:data.logged_in_user_id
+        }
+        console.log(socket.id +"   to   "+id_to_socket[data._id])
+        io.to(id_to_socket[data._id]).emit("messagesent",payload )
         // console.log(details.data)
     })
 });
