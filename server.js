@@ -29,14 +29,12 @@ async function tokentouser(token) {
 id_to_socket = {}
 
 const findidwithsocketid = (socketid) => _.findKey(id_to_socket, (id) => id === socketid);
-
 io.on('connection', (socket) => {
     socket.on("registerTheToken", async ({ token }) => {
         console.log("token: "+token)
         details = await tokentouser(token);
-        console.log("details: "+details.data)
-        id_to_socket[details.data._id] = socket.id
-        console.log('A user connected');
+        console.log("details: "+details?.data._id)
+        id_to_socket[details?.data._id] = socket.id
         console.log(id_to_socket)
         // io.to(socket.id).emit("event1","hello")
     })
@@ -54,7 +52,8 @@ io.on('connection', (socket) => {
             isSender: false,
             time: data.time_of_message,
             _id: data.uid,
-            from:data.logged_in_user_id
+            from: data.logged_in_user_id,
+            type:"message"
         }
         console.log(socket.id +"   to   "+id_to_socket[data._id])
         io.to(id_to_socket[data._id]).emit("messagesent",payload )
