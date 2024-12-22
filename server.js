@@ -31,9 +31,7 @@ id_to_socket = {}
 const findidwithsocketid = (socketid) => _.findKey(id_to_socket, (id) => id === socketid);
 io.on('connection', (socket) => {
     socket.on("registerTheToken", async ({ token }) => {
-        console.log("token: "+token)
         details = await tokentouser(token);
-        console.log("details: "+details?.data._id)
         id_to_socket[details?.data._id] = socket.id
         console.log(id_to_socket)
         // io.to(socket.id).emit("event1","hello")
@@ -50,7 +48,7 @@ io.on('connection', (socket) => {
         const payload = {
             message: data.message,
             isSender: false,
-            time: data.time_of_message,
+            time: data.time,
             _id: data.uid,
             from: data.logged_in_user_id,
             type:"message"
