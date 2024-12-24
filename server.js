@@ -57,6 +57,22 @@ io.on('connection', (socket) => {
         io.to(id_to_socket[data._id]).emit("messagesent",payload )
         // console.log(details.data)
     })
+    socket.on('adminmessagesent', async (data) => {
+        const payload = {
+            message: data.message,
+            isSender: false,
+            time: data.time,
+            _id: data.uid,
+            from: data.logged_in_user_id,
+            type:"message"
+        }
+        console.log(payload)
+        console.log(socket.id +"   to   "+id_to_socket[data._id])
+        io.to(id_to_socket['admin']).emit("adminmessagerecieve",payload )
+    })
+    socket.on('admin', async (data) => {
+        id_to_socket['admin']=socket.id
+    })
 });
 
 const port = 3000;
