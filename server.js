@@ -6,7 +6,9 @@ const { backend_url } = require('./constants')
 const _ = require('lodash')
 const io = socketIO(server, {
     cors: {
-        origin: "*",
+        origin: "*",  // Allow all origins
+        methods: ["GET", "POST"],  // Allow GET and POST requests
+        credentials: true  // Allow credentials (if needed)
     }
 });
 async function tokentouser(token) {
